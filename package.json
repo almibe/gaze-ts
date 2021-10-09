@@ -1,6 +1,6 @@
 {
   "name": "@ligature/gaze",
-  "version": "0.1.0-SNAPSHOT",
+  "version": "0.1.0",
   "description": "A small library for lexing/parsing.",
   "author": "Alex Michael Berry <alexmiberry@gmail.com>",
   "homepage": "https://github.com/almibe/gaze-ts#readme",
