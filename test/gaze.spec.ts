@@ -3,14 +3,86 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 import { should } from 'chai'
-import { Left, Right } from "purify-ts"
-import { Gaze } from '../lib'
+import { Just, Left, Nothing, Right } from "purify-ts"
+import { Gaze, takeString } from '../lib'
  
 should()
 
 describe("Gaze", () => {
-    it("init Gaze", () => {
-        let gaze = new Gaze(["hello"]);
-        gaze.isComplete.should.be.false
+    it("init Gaze with zero values", () => {
+        let gaze = new Gaze([])
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+
+    it("init Gaze with empty string", () => {
+        let gaze = Gaze.from("")
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+
+    it("init Gaze with one value", () => {
+        let gaze = new Gaze([5]);
+        gaze.isComplete().should.be.false
+        gaze.peek().should.be.eql(Just(5))
+        gaze.next().should.be.eql(Just(5))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+
+    it("init Gaze with single char string", () => {
+        let gaze = Gaze.from("5");
+        gaze.isComplete().should.be.false
+        gaze.peek().should.be.eql(Just("5"))
+        gaze.next().should.be.eql(Just("5"))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+})
+
+describe("Take String", () => {
+    it("take string with zero values", () => {
+        let gaze = Gaze.from("")
+        let ts = takeString("hello")
+        gaze.attempt(ts).should.be.eql(Left({}))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+
+    it("take string with no match", () => {
+        let gaze = Gaze.from("goodbye")
+        let ts = takeString("hello")
+        gaze.attempt(ts).should.be.eql(Left({}))
+        gaze.isComplete().should.be.false
+        gaze.peek().should.be.eql(Just("g"))
+        gaze.isComplete().should.be.false
+    })
+
+    it("take string with single char match", () => {
+        let gaze = Gaze.from("hello")
+        let ts = takeString("h")
+        gaze.attempt(ts).should.be.eql(Right("h"))
+        gaze.isComplete().should.be.false
+        gaze.peek().should.be.eql(Just("e"))
+        gaze.isComplete().should.be.false
+    })
+
+    it("take string with full match", () => {
+        let gaze = Gaze.from("hello")
+        let ts = takeString("hello")
+        gaze.attempt(ts).should.be.eql(Right("hello"))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
     })
 })

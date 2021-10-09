@@ -2,34 +2,32 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-export const x = "x"
+import { Either, Left, Right } from "purify-ts"
+import { Gaze } from "."
 
-//  #[derive(Clone, PartialEq, Debug)]
-//  pub struct NoMatch;
- 
-//  pub fn take_string<'a>(
-//      to_match: &'a str,
-//  ) -> impl Fn(&mut Gaze<&str>) -> Result<&'a str, NoMatch> + 'a {
-//      let graphemes = to_match.graphemes(true).collect::<Vec<&str>>();
-//      move |gaze: &mut Gaze<&str>| -> Result<&str, NoMatch> {
-//          let mut offset = 0usize;
-//          while offset < graphemes.len() {
-//              let next_char = gaze.next();
-//              match next_char {
-//                  Some(next_char) => {
-//                      if graphemes[offset] == next_char {
-//                          offset += 1;
-//                      } else {
-//                          return Err(NoMatch);
-//                      }
-//                  }
-//                  None => return Err(NoMatch),
-//              }
-//          }
-//          Ok(to_match)
-//      }
-//  }
- 
+export type NoMatch = {}
+
+export function takeString(toMatch: string): (gaze: Gaze<string>) => Either<NoMatch, string> {
+//    let graphemes = to_match.graphemes(true).collect::<Vec<&str>>();
+    let chars = toMatch.split("")
+    return (gaze) => {
+        let offset = 0
+        while (offset < chars.length) {
+            let nextChar = gaze.next()
+            if (nextChar.isJust()) {
+                if (chars[offset] == nextChar.unsafeCoerce()) {
+                    offset += 1;
+                } else {
+                    return Left({})
+                }
+            } else {
+                return Left({})
+            }
+        }
+        return Right(toMatch)
+    }
+}
+
 //  pub fn ignore_all<'a>(
 //      to_match: Vec<&'a str>, //TODO maybe make this an array instead of Vec
 //  ) -> impl Fn(&mut Gaze<&'a str>) -> Result<(), NoMatch> {

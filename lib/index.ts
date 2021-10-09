@@ -41,29 +41,24 @@ export class Gaze<I> { //TODO make a class
         }
     }
 
-    attempt<T, E>(step: Step<I, T, E>): Either<E, T> {
-//        let startOfThisLoop = this.offset;
-//        let res = step(this);
+    attempt<T, E>(step: Step<I, E, T>): Either<E, T> {
+        let startOfThisLoop = this.offset
+        let res = step(this)
 
-        // if (res.)
-
-        // match res {
-        //     Ok(_) => res,
-        //     Err(e) => {
-        //         this.offset = startOfThisLoop;
-        //         Err(e)
-        //     }
-        // }
-        throw new Error("TODO")
+        if (res.isRight()) {
+            return res
+        } else {
+            this.offset = startOfThisLoop
+            return res
+        }
     }
 
-    ignore<T, E>(step: Step<I, T, E>) {
-        // let startOfThisLoop = this.offset;
-        // let res = step(this);
-        // if res.is_err() {
-        //     this.offset = startOfThisLoop;
-        // }
-        throw new Error("TODO")
+    ignore<T, E>(step: Step<I, E, T>): void {
+        let startOfThisLoop = this.offset;
+        let res = step(this);
+        if(res.isLeft()) {
+            this.offset = startOfThisLoop;
+        }
     }
 }
 
