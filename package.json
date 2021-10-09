@@ -1,0 +1,33 @@
+{
+  "name": "@ligature/gaze",
+  "version": "0.1.0-SNAPSHOT",
+  "description": "A small library for lexing/parsing.",
+  "author": "Alex Michael Berry <alexmiberry@gmail.com>",
+  "homepage": "https://github.com/almibe/gaze-ts#readme",
+  "license": "MPL-2.0",
+  "main": "lib/index.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha -r ts-node/register test/**/*.spec.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/almibe/gaze-ts.git"
+  },
+  "bugs": {
+    "url": "https://github.com/almibe/gaze-ts/issues"
+  },
+  "dependencies": {
+    "purify-ts": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.18",
+    "@types/mocha": "^8.2.2",
+    "chai": "^4.3.4",
+    "mocha": "^9.0.1",
+    "ts-node": "^10.0.0"
+  }
+}
