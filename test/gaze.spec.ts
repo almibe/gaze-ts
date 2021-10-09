@@ -4,7 +4,7 @@
 
 import { should } from 'chai'
 import { Just, Left, Nothing, Right } from "purify-ts"
-import { Gaze, takeString } from '../lib'
+import { Gaze, takeString, takeWhile } from '../lib'
  
 should()
 
@@ -83,6 +83,44 @@ describe("Take String", () => {
         gaze.attempt(ts).should.be.eql(Right("hello"))
         gaze.isComplete().should.be.true
         gaze.peek().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+})
+
+describe("Take While", () => {
+    it("take while with zero values", () => {
+        let gaze = Gaze.from("")
+        let ts = takeWhile((s: string) => {
+            return true
+        })
+        gaze.attempt(ts).should.be.eql(Left({}))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
+        gaze.isComplete().should.be.true
+    })
+
+    it("take while with one result", () => {
+        let gaze = Gaze.from("hello")
+        let ts = takeWhile((s: string) => {
+            return s == "h"
+        })
+        gaze.attempt(ts).should.be.eql(Right("h"))
+        gaze.isComplete().should.be.false
+        gaze.peek().should.be.eql(Just("e"))
+        gaze.next().should.be.eql(Just("e"))
+        gaze.isComplete().should.be.false
+    })
+
+    it("take while with full match", () => {
+        let gaze = Gaze.from("hello")
+        let ts = takeWhile((s: string) => {
+            return true
+        })
+        gaze.attempt(ts).should.be.eql(Right("hello"))
+        gaze.isComplete().should.be.true
+        gaze.peek().should.be.eql(Nothing)
+        gaze.next().should.be.eql(Nothing)
         gaze.isComplete().should.be.true
     })
 })

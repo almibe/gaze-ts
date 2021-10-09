@@ -48,37 +48,33 @@ export function takeString(toMatch: string): (gaze: Gaze<string>) => Either<NoMa
 //          Ok(())
 //      }
 //  }
- 
-//  pub fn take_while_str<'a>(
-//      matcher: &'a dyn Fn(&str) -> bool,
-//  ) -> impl Fn(&mut Gaze<&str>) -> Result<String, NoMatch> + '_ {
-//      move |gaze: &mut Gaze<&str>| -> Result<String, NoMatch> {
-//          let mut res = String::new();
-//          loop {
-//              let peek = gaze.peek();
-//              match peek {
-//                  Some(peek) => {
-//                      if matcher(peek) {
-//                          gaze.next();
-//                          res += peek;
-//                      } else if res.is_empty() {
-//                          return Err(NoMatch);
-//                      } else {
-//                          return Ok(res);
-//                      }
-//                  }
-//                  None => {
-//                      if res.is_empty() {
-//                          return Err(NoMatch);
-//                      } else {
-//                          return Ok(res);
-//                      }
-//                  }
-//              }
-//          }
-//      }
-//  }
- 
+
+export function takeWhile(matcher: (toMatch: string) => boolean): (gaze: Gaze<string>) => Either<NoMatch, string> {
+    return (gaze: Gaze<string>): Either<NoMatch, string> => {
+        let res = ""
+        while(true) {
+            let peek = gaze.peek();
+            if (peek.isJust()) {
+                let peekValue = peek.unsafeCoerce()
+                if (matcher(peekValue)) {
+                    gaze.next();
+                    res += peekValue;
+                } else if (res.length == 0) {
+                    return Left({});
+                } else {
+                    return Right(res);
+                }
+            } else {
+                if (res.length == 0) {
+                    return Left({});
+                } else {
+                    return Right(res);
+                }
+            }
+        }
+    }
+}
+
 //  pub fn take_while<'a, T>(
 //      matcher: &'a dyn Fn(T) -> bool,
 //  ) -> impl Fn(&mut Gaze<T>) -> Result<Vec<T>, NoMatch> + '_
